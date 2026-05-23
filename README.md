@@ -1,148 +1,166 @@
 # skill-readable-output
 
-**Distill long AI conversations into structured, reviewable HTML pages.**
-
-> Turn hours of discussion into a 5-minute read that rebuilds the thinking context — not a transcript, but a decision record.
-
 [中文文档](README_zh.md)
 
 ---
 
-## What It Does
+You just spent two hours with Claude debugging a gnarly race condition. You explored three approaches, killed two, found the root cause in an unexpected place, and landed on a fix that required changing the mental model of how the system works.
 
-When you have a long conversation with an AI assistant — debugging a system, designing architecture, exploring research directions, or making product decisions — the insights get buried in chat history. Three months later, you'll ask the same questions again.
+Tomorrow you'll remember the fix. In three months, you won't remember *why* you rejected the other two approaches. You'll re-explore them. You'll waste another afternoon.
 
-This skill extracts the **decisions**, **reasoning**, and **action items** from your conversation and renders them as a clean, self-contained HTML page you can revisit anytime.
+**This skill turns that conversation into a self-contained HTML page you can reopen in 5 minutes and be back in the room where it happened.**
 
-## Quick Start
+Not a transcript. Not a summary. A *decision record* — what you decided, why, what you rejected, and what's still open.
 
-### For Claude Code / Kiro
+---
 
-1. Copy `SKILL-readable-output.md` into your project's `.claude/skills/` directory:
+## The Problem It Solves
+
+AI conversations are high-bandwidth but zero-persistence. You discuss, decide, and move on. The chat log is technically there, but nobody re-reads a 200-message thread. The insights rot.
+
+This is worse than not having the conversation at all — because you *think* you documented it ("it's in the chat history"), so you never write it down properly.
+
+`skill-readable-output` forces the distillation at the moment of maximum context, while you and the AI still remember everything.
+
+## What You Get
+
+A single HTML file. Self-contained (no external dependencies). Opens in any browser. Looks like this:
+
+```
+┌─────────────────────────────────────────────┐
+│ 📋 Scenario: ADR · Depth: Standard · Style: Technical │
+├─────────────────────────────────────────────┤
+│                                             │
+│  TL;DR                                      │
+│  We chose event sourcing over CRUD because  │
+│  auditability > write performance for this  │
+│  domain. Rejected saga pattern (too complex │
+│  for team size).                            │
+│                                             │
+├─────────────────────────────────────────────┤
+│                                             │
+│  Context → Decision → Consequences          │
+│  (structure adapts to your scenario)        │
+│                                             │
+├─────────────────────────────────────────────┤
+│  □ Action Items (prioritized)               │
+│  □ References (docs, links, papers)         │
+│  □ Open Questions + Boundary Conditions     │
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+## Install (30 seconds)
 
 ```bash
+# Claude Code / Kiro
 mkdir -p .claude/skills
-cp SKILL-readable-output.md .claude/skills/
+curl -o .claude/skills/SKILL-readable-output.md \
+  https://raw.githubusercontent.com/git-zyyang/skill-readable-output/main/SKILL-readable-output.md
 ```
 
-2. After a productive conversation, just say:
-
-```
-整理一下这次讨论
-```
-
-or
+Then, at the end of any valuable conversation:
 
 ```
 /readable
 ```
 
-3. The skill will ask 2-3 quick questions about context, then generate a structured HTML file and open it in your browser.
+That's it. The skill asks 2-3 questions, generates the HTML, opens it in your browser.
 
-### For Other AI Assistants
+## 6 Scenarios × 4 Styles
 
-The skill file is a structured prompt. You can adapt it for any AI assistant that supports system prompts or custom instructions. The core logic (phases, structure templates, anti-patterns) is transferable.
+The skill auto-detects what kind of discussion you had and picks the right structure:
 
-## Features
+| You were discussing... | It generates... | Looks like... |
+|------------------------|-----------------|---------------|
+| Research design | Timeline (explore → reject → select) | Warm academic |
+| System architecture | ADR (context → decision → consequences) | GitHub-style |
+| A painful debug | Postmortem (symptom → root cause → fix → prevention) | GitHub-style |
+| Product direction | PRD-lite (problem → options → tradeoffs → MVP) | Card-based |
+| Library/framework choice | Weighted comparison matrix | GitHub-style |
+| "Just give me the TODOs" | Priority-sorted action list | Minimal |
 
-### 6 Scenario Templates
+4 visual styles adapt automatically, or you can override:
 
-| Scenario | Structure | Best For |
-|----------|-----------|----------|
-| Research Design | Timeline (Problem → Options → Selection) | Academic discussions, study design |
-| Architecture Decision (ADR) | Context → Decision → Consequences | System design, tech choices |
-| Debug Postmortem | Symptom → Investigation → Root Cause → Fix | Troubleshooting sessions |
-| Product Direction | Problem → Solutions → Tradeoffs → MVP | Product/feature discussions |
-| Tech Comparison | Weighted matrix (Dimensions × Candidates) | Library/framework selection |
-| Action Extraction | Priority-sorted TODO list | Quick wrap-ups |
+- **Research Narrative** — warm white, serif, timeline, callout boxes
+- **Technical Document** — GitHub aesthetic, monospace code, status badges
+- **Product Memo** — cards, tags, progress indicators, priority ribbons
+- **Decision Brief** — black and white, nothing but conclusions and reasons
 
-### 4 Visual Styles
+## Why Not Just Ask "Summarize This Conversation"?
 
-| Style | Look | Default For |
-|-------|------|-------------|
-| Research Narrative | Warm white + timeline + callouts | Academic, research |
-| Technical Document | GitHub-style + code blocks + badges | Code, architecture |
-| Product Memo | Cards + tags + progress indicators | Product, features |
-| Decision Brief | Minimal black/white + priority labels | Quick decisions |
+You can. You'll get a wall of text that's 80% filler. Here's what this skill does differently:
 
-### Smart Defaults
+| Generic "summarize" | This skill |
+|---------------------|------------|
+| Includes everything | Caps at 3 core points (forces prioritization) |
+| Flat text blob | Structure matches your discussion type |
+| No quality control | Half-cut test + 4-question self-check + 11 anti-patterns |
+| Disappears in chat | Persists as a file in your project |
+| Same format every time | 6 structures × 4 styles, auto-matched |
+| No actionability | Extracts concrete TODOs with priorities |
+| No boundaries | States what's still open and where conclusions break |
 
-- Say "整理一下" with no further input → auto-applies "self-review + decision record + standard depth"
-- Style auto-matches scenario (ADR → Technical Document, etc.)
-- Volume guard: warns you if content is too thin for "full version"
+## Built-in Quality Gates
 
-### Built-in Quality Gates
+The skill doesn't just write — it audits itself:
 
-- **3-point cap**: No more than 3 core insights per document (forces prioritization)
-- **Half-cut test**: "If you could only keep half, which stay?" — survivors are the real skeleton
-- **4-question self-check**: Readable without context? Decisions + reasons present? Not a transcript? TODOs actionable?
-- **Anti-pattern list**: 11 documented failure modes to avoid
+- **3-point cap**: More than 3 core insights? Merge or demote. Working memory is real.
+- **Half-cut test**: "Keep only half — which survive?" Those are your skeleton.
+- **Volume guard**: Chose "full version" but only had 3 decision points? The skill pushes back.
+- **4-question self-check**: (1) Readable without chat context? (2) Decisions + reasons present? (3) Not a transcript? (4) TODOs actionable?
+- **11 anti-patterns**: Documented failure modes — transcript-dumping, filler-padding, vague TODOs, missing rationale, etc.
 
-## Output Structure
+## Adapt It
 
-Every generated HTML includes:
+**Add a style**: Drop a new CSS `:root` block in the skill file. The HTML skeleton is shared — only variables change.
 
-```
-┌─────────────────────────────────┐
-│ Config Bar (scenario/depth/style)│
-├─────────────────────────────────┤
-│ TL;DR (2-3 sentences)           │
-├─────────────────────────────────┤
-│ Main Content                    │
-│ (structure varies by scenario)  │
-├─────────────────────────────────┤
-│ Action Items (prioritized)      │
-├─────────────────────────────────┤
-│ References (links/papers/docs)  │
-├─────────────────────────────────┤
-│ Open Questions + Boundaries     │
-└─────────────────────────────────┘
-```
+**Add a scenario**: Add a row to the structure table. Each scenario = a name + a structure pattern + an optional default style.
 
-## Customization
+**Change file paths**: Edit the routing section. Default puts ADRs in `docs/adr_*.html` and discussions in `docs/discussions/`.
 
-### Adding Your Own Style
-
-Add a new CSS `:root` block in the skill file under "CSS 设计 token" section. The HTML skeleton is shared across all styles — only variables change.
-
-### Adjusting File Paths
-
-Edit the "文件路径（智能路由）" section to match your project structure. Default:
-
-```
-Academic    → docs/discussions/discussion_{topic}_{date}.html
-Technical   → {project}/docs/adr_{topic}_{date}.html
-Product     → {project}/docs/decision_{topic}_{date}.html
-```
-
-### Extending Scenarios
-
-Add rows to the "阶段 4 · 选主结构" table. Each scenario needs: a name, a recommended structure pattern, and optionally a default style mapping.
+**Use with other AI tools**: The skill file is a structured prompt. The phases, templates, and anti-patterns work in any system that accepts custom instructions.
 
 ## How It Works
 
 ```
-User triggers → Phase 1: Scenario confirmation (2-3 questions)
-             → Phase 1.5: Volume self-check (anti-bloat guard)
-             → Phase 2: Define endpoint (what reader gets)
-             → Phase 3: Extract ≤3 core points (half-cut test)
-             → Phase 4: Select structure template
-             → Phase 5: Write (TL;DR → content → TODOs → refs → exit)
-             → Phase 6: Self-check 4 questions
-             → Output HTML + auto-open in browser
+Trigger ("整理一下" / "/readable" / "write an ADR")
+    │
+    ▼
+Phase 1: What scenario? How deep? (2-3 questions, or smart defaults)
+    │
+    ▼
+Phase 1.5: Volume self-check (rejects "full version" if content is thin)
+    │
+    ▼
+Phase 2-4: Define endpoint → Extract ≤3 core points → Pick structure
+    │
+    ▼
+Phase 5: Write (TL;DR → body → TODOs → references → open questions)
+    │
+    ▼
+Phase 6: Self-check 4 questions
+    │
+    ▼
+Output: HTML file → auto-opens in browser
 ```
 
-## When NOT to Use
+## When to Skip It
 
-- Conversation < 5 turns (just write a one-liner note)
-- Pure code implementation with no decision discussion
-- Content already structured elsewhere (Jira, Notion, Linear)
-- You want markdown, not HTML (just say so)
-- Discussion is still ongoing (wait until it concludes)
+- Chat was < 5 turns. Just write a one-liner in your notes.
+- Pure code, no decisions. The code *is* the documentation.
+- Already in Jira/Notion/Linear. Don't duplicate.
+- You want markdown. Just say "用markdown" and it won't generate HTML.
+- Discussion isn't over yet. Wait.
 
 ## Contributing
 
-Issues and PRs welcome. If you've adapted this for a different AI assistant or added a new scenario template, I'd love to see it.
+PRs welcome. Especially interested in:
+
+- New scenario templates (design sprints? incident response? hiring decisions?)
+- Ports to other AI assistants (GPT, Gemini, etc.)
+- Real output examples (anonymized) for the `examples/` directory
+- Translations
 
 ## License
 
