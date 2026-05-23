@@ -1,47 +1,47 @@
 # skill-readable-output
 
-[中文文档](README_zh.md)
+[English](README_en.md)
 
 ---
 
-You just spent two hours with Claude debugging a gnarly race condition. You explored three approaches, killed two, found the root cause in an unexpected place, and landed on a fix that required changing the mental model of how the system works.
+你刚花两小时和 Claude 讨论一个系统架构问题。探索了三种方案，否决了两种，在一个意想不到的地方找到了关键约束，最终选定的方案需要改变对整个系统的心智模型。
 
-Tomorrow you'll remember the fix. In three months, you won't remember *why* you rejected the other two approaches. You'll re-explore them. You'll waste another afternoon.
+明天你还记得结论。三个月后，你不会记得*为什么否决了另外两种方案*。你会重新探索它们。你会再浪费一个下午。
 
-**This skill turns that conversation into a self-contained HTML page you can reopen in 5 minutes and be back in the room where it happened.**
+**这个 Skill 把那段对话变成一个自包含的 HTML 页面——重新打开，5分钟回到当时的思考现场。**
 
-Not a transcript. Not a summary. A *decision record* — what you decided, why, what you rejected, and what's still open.
+不是转录。不是摘要。是一份*决策记录*——决定了什么、为什么、否决了什么、还有什么悬而未决。
 
 ---
 
-## The Problem It Solves
+## 它解决什么问题
 
-AI conversations are high-bandwidth but zero-persistence. You discuss, decide, and move on. The chat log is technically there, but nobody re-reads a 200-message thread. The insights rot.
+AI 对话是高带宽、零持久化的。你讨论、决策、然后继续。聊天记录技术上还在，但没人会重读一个 200 条消息的对话。洞察在腐烂。
 
-This is worse than not having the conversation at all — because you *think* you documented it ("it's in the chat history"), so you never write it down properly.
+这比没有对话更糟——因为你*以为*自己记录了（"在聊天记录里呢"），所以你永远不会正经写下来。
 
-`skill-readable-output` forces the distillation at the moment of maximum context, while you and the AI still remember everything.
+`skill-readable-output` 在上下文最完整的那一刻强制蒸馏——趁你和 AI 都还记得一切。
 
-## What You Get
+## 你会得到什么
 
-A single HTML file. Self-contained (no external dependencies). Opens in any browser. Looks like this:
+一个 HTML 文件。自包含（无外部依赖）。任何浏览器打开。长这样：
 
-### Header + TL;DR
-![Header and TL;DR section](examples/01-header-tldr.png)
+### 头部 + TL;DR
+![配置条和TL;DR区域](examples/01-header-tldr.png)
 
-### Methodology Insights
-![Methodology extraction](examples/02-methodology.png)
+### 方法论洞察
+![方法论提取](examples/02-methodology.png)
 
-### Decision Timeline
-![Timeline of key decisions and iterations](examples/03-timeline.png)
+### 决策时间线
+![关键决策与迭代记录](examples/03-timeline.png)
 
-### Decision Checklist
-![Core decisions with rationale](examples/04-decisions.png)
+### 核心决策清单
+![决策及理由](examples/04-decisions.png)
 
-### Reusable Methods
-![Reusable methodology distillation](examples/05-reusable-methods.png)
+### 可复用方法论
+![方法论沉淀](examples/05-reusable-methods.png)
 
-## Install (30 seconds)
+## 安装（30秒）
 
 ```bash
 # Claude Code / Kiro
@@ -50,109 +50,109 @@ curl -o .claude/skills/SKILL-readable-output.md \
   https://raw.githubusercontent.com/git-zyyang/skill-readable-output/main/SKILL-readable-output.md
 ```
 
-Then, at the end of any valuable conversation:
+然后，在任何有价值的对话结束时：
 
 ```
 /readable
 ```
 
-That's it. The skill asks 2-3 questions, generates the HTML, opens it in your browser.
+就这样。Skill 问 2-3 个问题，生成 HTML，自动在浏览器打开。
 
-## 6 Scenarios × 4 Styles
+## 6 种场景 × 4 种风格
 
-The skill auto-detects what kind of discussion you had and picks the right structure:
+Skill 自动识别你在讨论什么，选择对应的结构：
 
-| You were discussing... | It generates... | Looks like... |
-|------------------------|-----------------|---------------|
-| Research design | Timeline (explore → reject → select) | Warm academic |
-| System architecture | ADR (context → decision → consequences) | GitHub-style |
-| A painful debug | Postmortem (symptom → root cause → fix → prevention) | GitHub-style |
-| Product direction | PRD-lite (problem → options → tradeoffs → MVP) | Card-based |
-| Library/framework choice | Weighted comparison matrix | GitHub-style |
-| "Just give me the TODOs" | Priority-sorted action list | Minimal |
+| 你在讨论... | 它生成... | 视觉风格 |
+|------------|----------|----------|
+| 研究设计 | 时间线（探索→否决→选定） | 暖色学术风 |
+| 系统架构 | ADR（背景→决策→后果） | GitHub 风 |
+| 一次痛苦的 debug | 复盘（症状→根因→修复→防护） | GitHub 风 |
+| 产品方向 | 轻量 PRD（问题→方案→取舍→MVP） | 卡片风 |
+| 技术选型 | 加权对比矩阵 | GitHub 风 |
+| "就给我 TODO" | 优先级排序的行动清单 | 极简风 |
 
-4 visual styles adapt automatically, or you can override:
+4 种视觉风格自动匹配，也可以手动覆盖：
 
-- **Research Narrative** — warm white, serif, timeline, callout boxes
-- **Technical Document** — GitHub aesthetic, monospace code, status badges
-- **Product Memo** — cards, tags, progress indicators, priority ribbons
-- **Decision Brief** — black and white, nothing but conclusions and reasons
+- **研究叙事** — 暖白底、衬线体、时间线、callout 高亮框
+- **技术文档** — GitHub 美学、等宽代码块、状态徽章
+- **产品备忘** — 卡片、标签、进度指示、优先级色带
+- **决策备忘** — 黑白极简，只有结论和理由
 
-## Why Not Just Ask "Summarize This Conversation"?
+## 为什么不直接说"帮我总结一下"？
 
-You can. You'll get a wall of text that's 80% filler. Here's what this skill does differently:
+你可以。你会得到一堵 80% 是废话的文字墙。这个 Skill 的区别：
 
-| Generic "summarize" | This skill |
-|---------------------|------------|
-| Includes everything | Caps at 3 core points (forces prioritization) |
-| Flat text blob | Structure matches your discussion type |
-| No quality control | Half-cut test + 4-question self-check + 11 anti-patterns |
-| Disappears in chat | Persists as a file in your project |
-| Same format every time | 6 structures × 4 styles, auto-matched |
-| No actionability | Extracts concrete TODOs with priorities |
-| No boundaries | States what's still open and where conclusions break |
+| 通用"总结一下" | 本 Skill |
+|---------------|----------|
+| 什么都包含 | 上限 3 个核心点（强制优先级排序） |
+| 扁平文字块 | 结构匹配你的讨论类型 |
+| 无质量控制 | 砍半测试 + 4问自检 + 11条反模式 |
+| 消失在对话里 | 持久化为项目中的文件 |
+| 每次格式一样 | 6种结构 × 4种风格，自动匹配 |
+| 不可执行 | 提取具体 TODO + 优先级 |
+| 没有边界 | 声明哪些结论在什么条件下可能不成立 |
 
-## Built-in Quality Gates
+## 内置质量门控
 
-The skill doesn't just write — it audits itself:
+Skill 不只是写——它审计自己：
 
-- **3-point cap**: More than 3 core insights? Merge or demote. Working memory is real.
-- **Half-cut test**: "Keep only half — which survive?" Those are your skeleton.
-- **Volume guard**: Chose "full version" but only had 3 decision points? The skill pushes back.
-- **4-question self-check**: (1) Readable without chat context? (2) Decisions + reasons present? (3) Not a transcript? (4) TODOs actionable?
-- **11 anti-patterns**: Documented failure modes — transcript-dumping, filler-padding, vague TODOs, missing rationale, etc.
+- **3 点上限**：超过 3 个核心洞察？合并或降级。工作记忆是真实的。
+- **砍半测试**："只保留一半——哪些活下来？"活下来的就是骨架。
+- **体量守卫**：选了"完整版"但只有 3 个决策点？Skill 会反劝。
+- **4 问自检**：(1) 脱离对话能看懂？(2) 决策+理由都在？(3) 不是转录？(4) TODO 可执行？
+- **11 条反模式**：已记录的失败模式——转录式堆砌、注水填充、模糊 TODO、缺失理由……
 
-## Adapt It
+## 自定义
 
-**Add a style**: Drop a new CSS `:root` block in the skill file. The HTML skeleton is shared — only variables change.
+**加风格**：在 Skill 文件的 CSS token 部分加一个 `:root` 块。HTML 骨架共用——只有变量不同。
 
-**Add a scenario**: Add a row to the structure table. Each scenario = a name + a structure pattern + an optional default style.
+**加场景**：在结构表中加一行。每个场景 = 名称 + 结构模式 + 可选默认风格。
 
-**Change file paths**: Edit the routing section. Default puts ADRs in `docs/adr_*.html` and discussions in `docs/discussions/`.
+**改路径**：编辑路由部分。默认把 ADR 放 `docs/adr_*.html`，讨论放 `docs/discussions/`。
 
-**Use with other AI tools**: The skill file is a structured prompt. The phases, templates, and anti-patterns work in any system that accepts custom instructions.
+**用于其他 AI 工具**：Skill 文件本质是结构化 prompt。阶段、模板、反模式在任何支持自定义指令的系统中都能用。
 
-## How It Works
+## 工作原理
 
 ```
-Trigger ("整理一下" / "/readable" / "write an ADR")
+触发（"整理一下" / "/readable" / "写个ADR"）
     │
     ▼
-Phase 1: What scenario? How deep? (2-3 questions, or smart defaults)
+阶段1：什么场景？多深？（2-3个问题，或智能默认）
     │
     ▼
-Phase 1.5: Volume self-check (rejects "full version" if content is thin)
+阶段1.5：体量自检（内容太薄会拒绝"完整版"）
     │
     ▼
-Phase 2-4: Define endpoint → Extract ≤3 core points → Pick structure
+阶段2-4：定终点 → 提取≤3核心点 → 选结构
     │
     ▼
-Phase 5: Write (TL;DR → body → TODOs → references → open questions)
+阶段5：写（TL;DR → 正文 → TODO → 参考 → 开放问题）
     │
     ▼
-Phase 6: Self-check 4 questions
+阶段6：自检4问
     │
     ▼
-Output: HTML file → auto-opens in browser
+输出：HTML文件 → 自动在浏览器打开
 ```
 
-## When to Skip It
+## 什么时候不该用
 
-- Chat was < 5 turns. Just write a one-liner in your notes.
-- Pure code, no decisions. The code *is* the documentation.
-- Already in Jira/Notion/Linear. Don't duplicate.
-- You want markdown. Just say "用markdown" and it won't generate HTML.
-- Discussion isn't over yet. Wait.
+- 对话不到 5 轮。直接记一句话。
+- 纯代码实现，没有决策。代码本身就是文档。
+- 已经在 Jira/Notion/Linear 里了。别重复。
+- 你想要 markdown。说一声就行，不会生成 HTML。
+- 讨论还没结束。等结束再触发。
 
-## Contributing
+## 贡献
 
-PRs welcome. Especially interested in:
+欢迎 PR。特别感兴趣的方向：
 
-- New scenario templates (design sprints? incident response? hiring decisions?)
-- Ports to other AI assistants (GPT, Gemini, etc.)
-- Real output examples (anonymized) for the `examples/` directory
-- Translations
+- 新场景模板（设计冲刺？事故响应？招聘决策？）
+- 移植到其他 AI 助手（GPT、Gemini 等）
+- 真实产出示例（脱敏后）放到 `examples/` 目录
+- 翻译
 
-## License
+## 许可证
 
 [MIT](LICENSE)
