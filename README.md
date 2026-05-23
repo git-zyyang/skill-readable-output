@@ -26,29 +26,20 @@ This is worse than not having the conversation at all — because you *think* yo
 
 A single HTML file. Self-contained (no external dependencies). Opens in any browser. Looks like this:
 
-```
-┌─────────────────────────────────────────────┐
-│ 📋 Scenario: ADR · Depth: Standard · Style: Technical │
-├─────────────────────────────────────────────┤
-│                                             │
-│  TL;DR                                      │
-│  We chose event sourcing over CRUD because  │
-│  auditability > write performance for this  │
-│  domain. Rejected saga pattern (too complex │
-│  for team size).                            │
-│                                             │
-├─────────────────────────────────────────────┤
-│                                             │
-│  Context → Decision → Consequences          │
-│  (structure adapts to your scenario)        │
-│                                             │
-├─────────────────────────────────────────────┤
-│  □ Action Items (prioritized)               │
-│  □ References (docs, links, papers)         │
-│  □ Open Questions + Boundary Conditions     │
-│                                             │
-└─────────────────────────────────────────────┘
-```
+### Header + TL;DR
+![Header and TL;DR section](examples/01-header-tldr.png)
+
+### Methodology Insights
+![Methodology extraction](examples/02-methodology.png)
+
+### Decision Timeline
+![Timeline of key decisions and iterations](examples/03-timeline.png)
+
+### Decision Checklist
+![Core decisions with rationale](examples/04-decisions.png)
+
+### Reusable Methods
+![Reusable methodology distillation](examples/05-reusable-methods.png)
 
 ## Install (30 seconds)
 
